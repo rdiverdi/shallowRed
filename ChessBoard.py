@@ -8,6 +8,11 @@
 # Have fun!
 #####################################################################
 
+#####################################################################
+# Michael and Dennis said that they did some optimizations on the
+# code, so credit for that goes to them.
+#####################################################################
+
 from copy import deepcopy
 from pprint import pprint
 import pygame
