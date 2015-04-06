@@ -45,10 +45,11 @@
 </h4>
 
 <p>
-  Chess AIs generally start with a min-max search algorithm which looks ahead a certain number of moves and 
-  evaluates that move based on the maximum possible loss due to that move.  The algorithm then chooses the move
-  with the smallest maximum loss.  Loss is measured by giving a value to each piece, which is then gained or lost
-  when that piece is captured or lost. <br>
+  Chess AIs generally start with a min-max search algorithm which looks a certain number of moves ahead and evaluates
+  the board to find the best move. The "best move" is defined as the move which has the least risk associated with it, 
+  where risk is the outcome with the most loss.  Loss is often measured by giving a value to each piece, which is then
+  added or subtracted when that piece is captured or lost. There are some other methods of evaluating boards which are
+  discussed below. <br>
   Alpha-beta pruning is a meathod for speeding up the min-max algorithm by ignoring branches of the seach tree 
   which are obviously worse than already checked branches. <br>
   Evolutionary algorithms can be used to optimize min-max search algorithms by adjusting the weights of each piece 
