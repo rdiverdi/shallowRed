@@ -48,9 +48,9 @@
   Chess AIs generally start with a min-max search algorithm which looks ahead a certain number of moves and 
   evaluates that move based on the maximum possible loss due to that move.  The algorithm then chooses the move
   with the smallest maximum loss.  Loss is measured by giving a value to each piece, which is then gained or lost
-  when that piece is captured or lost. </n>
+  when that piece is captured or lost. <br>
   Alpha-beta pruning is a meathod for speeding up the min-max algorithm by ignoring branches of the seach tree 
-  which are obviously worse than already checked branches. </n>
+  which are obviously worse than already checked branches. <br>
 </p>
 
 <h4>
@@ -59,15 +59,35 @@
 </h4>
 
 <p>
-  Is it better to make our own basic AI and work from there, or start with someome else's and focus on extensions? </n>
+  Is it better to make our own basic AI and work from there, or start with someome else's and focus on extensions? <br>
   What is an interesting "new" direction to take chess AIs (for example, evolutionary algorithms for peice weights, 
   neural networks for more informative board evaluations, other cool ideas)?
 </p>
 
-<h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<h4>
+  <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+  Agenda
+</h4>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>
+  Introduce problem: <br>
+  &nbsp -Talk about how computers play chess <br>
+  &nbsp &nbsp &nbsp -computers are effient but play in a boring and computationally intensive manner <br>
+  &nbsp -We want to use a new approach to play chess in a more interesting manner <br><br>
+  
+  Ideation for ways to computationally play chass: <br>
+  &nbsp -Get some ideas for potential approaches before we give any background on existing algorithms <br><br>
+  
+  Discuss existing algorithms: <br>
+  &nbsp -Explain min-max searches and alpha-beta pruning <br>
+  &nbsp &nbsp &nbsp -pieces are weighted and lost/captured pieces are used to value moves <br><br>
+  
+  Explain ideas for improvements: <br>
+  &nbsp -Evolutionary algorithms <br>
+  &nbsp &nbsp &nbsp -improve weighting for pieces in min-max searching by optimizing the weights with evolutionary algorithms <br>
+  &nbsp -Neural networks <br>
+  &nbsp &nbsp &nbsp -Use a database of past chess games to decide on a move based on analysis of board positions.
+</p>
 
 <h3>
 <a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
