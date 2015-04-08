@@ -1,0 +1,137 @@
+import time
+import random
+import copy
+import ChessBoard
+
+piece_values = {'P':1, 'N':3, 'B':3, 'R':5, 'Q':9, 'K':102, 'p':-1, 'n':-3, 'b':-3, 'r':-5, 'q':-9, 'k':-102}
+
+def evaluate_board(chessboard, white, piece_values = piece_values):
+	""" Takes in a board object, as well as
+		a boolean indicating whether or not white is evaluating.
+		current algorithms sums own pieces and subtracts white's pieces
+		Optionally, you can specify the value of the pieces.
+
+		>>> chessboard = ChessBoard.ChessBoard()
+		>>> evaluate_board(chessboard, True)
+		0
+	"""
+
+	board = chessboard.getFEN()
+	value = 0
+	board = board.split()
+	for char in board[0]:
+		if char in piece_values:
+			value += piece_values[char]
+
+	if white:
+		return value
+	else:
+		return -value
+
+def get_all_valid_moves(chessboard):
+	moves = []
+	for i in xrange(8):
+		for j in xrange(8):
+			moves += [((i,j), move) for move in chessboard.getValidMoves((i,j))]
+	return moves
+
+
+class BoardEvaluation(object):
+
+	def __init__(self, chessboard, white, BoardEvaluator):
+		"""	chessboard: an instance of ChessBoard
+			white: whether the 
+		"""
+		self.chessboard = ChessBoard.ChessBoard()
+		self.chessboard.setFEN(chessboard.getFEN())
+		self.white = white
+		self.current_move = random.choice(get_all_valid_moves(chessboard))
+		self.branches = [Branch(move) for move in get_all_valid_moves(self.chessboard)]
+		self.BoardEvaluator = BoardEvaluator
+
+	def evaluate(self, max_time):
+		level = 0
+		max_time = time.time() + max_time
+		while time.time() < max_time: #Doesn't account for timeout occuring durring the loop. Will fix soon.
+			if self.branches:
+				evaluations = [move.evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white) for move in self.branches]
+				self.current_move = self.branches[random.choice(find_move_index(evaluations))].move
+			else:
+				return None #Might want to fix this. I can't imagine it ever returning, for what I'm doing now, but it could probably break something 
+			level += 1
+		return self.current_move
+
+
+
+	def find_move_index(self, numbers):
+		"""Takes in a list of numbers, and retuns the indexes of the maxes."""
+		best = [0]
+		for i in len(numbers):
+			if numbers[i] > numbers[best[0]]:
+				best = [i]
+			elif numbers[i] == numbers[best[0]]:
+				best.append(i)
+		return best
+
+class Branch(object):
+
+	def __init__(self, move):
+		self.move = move
+		self.branches = []
+		self.is_setup = False
+
+	def setup(self, chessboard):
+		''' Does all of the work that makes the process of making a possible move slow
+			It takes in the chessborad that it is supposed to be modifying.
+
+			>>> chessboard = ChessBoard.ChessBoard()
+			>>> chessboard.setFEN("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2")
+			>>> a_branch = Branch(((0,6),(0,5)))
+			>>> print a_branch.is_setup
+			False
+			>>> a_branch.setup(chessboard)
+			>>> print a_branch.is_setup
+			True
+			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True)
+			0
+			>>> '''
+		self.chessboard = ChessBoard.ChessBoard()
+		self.chessboard.setFEN(chessboard.getFEN())
+		self.chessboard.addMove(self.move[0], self.move[1])
+		self.branches = [Branch(move) for move in get_all_valid_moves(self.chessboard)]
+		self.is_setup = True
+
+	def evaluate(self, chessboard, maxplayer, level, BoardEvaluator, white, worst_value = None):
+		''' Evaluates current board value recursively.
+		'''
+		if not self.is_setup:
+			self.setup(chessboard)
+		if level == 0:
+			print self.move
+			self.chessboard.printBoard()
+			return BoardEvaluator(self.chessboard, white)
+		if not self.branches:
+			#I'm pretty sure this bit will result in the program being absolutly, completely, unwilling to win.
+			#We should fix that. But right now I just want to see if it is willing to play.
+			return BoardEvaluator(self.chessboard, white)
+		if maxplayer:
+			return max([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, worst_value) for i in xrange(len(self.branches))])
+		else:
+			if not best_value:
+				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator) for i in xrange(len(self.branches))])
+			current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, worst_value)
+			counter = 0
+			while current_value>best_value and counter<len(self.branches):
+				current_value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, worst_value)
+				counter += 1
+			return current_value
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
+
+
+
+
+
