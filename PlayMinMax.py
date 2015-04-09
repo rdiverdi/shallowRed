@@ -7,6 +7,7 @@ def makeBoard():
 	return ChessBoard.ChessBoard()
 
 def AI_Move(chessboard, white, max_time):
+	print type(MinMax.evaluate_board)
 	evaluation = MinMax.BoardEvaluation(chessboard, white, MinMax.evaluate_board)
 	curr_time = time.time()
 	AI_move = evaluation.evaluate(max_time)

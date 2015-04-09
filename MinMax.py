@@ -16,12 +16,12 @@ def evaluate_board(chessboard, white, piece_values = piece_values):
 		0
 	"""
 
-	board = chessboard.getFEN()
+	board = chessboard.getBoard()
 	value = 0
-	board = board.split()
-	for char in board[0]:
-		if char in piece_values:
-			value += piece_values[char]
+	for row in board:
+		for char in row:
+			if char in piece_values:
+				value += piece_values[char]
 
 	if white:
 		return value
@@ -36,14 +36,24 @@ def get_all_valid_moves(chessboard):
 	return moves
 
 
+def find_move_index(numbers):
+	"""Takes in a list of numbers, and retuns the indexes of the maxes."""
+	best = [0]
+	for i in range(len(numbers)):
+		if numbers[i] > numbers[best[0]]:
+			best = [i]
+		elif numbers[i] == numbers[best[0]]:
+			best.append(i)
+	return best
+
+
 class BoardEvaluation(object):
 
 	def __init__(self, chessboard, white, BoardEvaluator):
 		"""	chessboard: an instance of ChessBoard
 			white: whether the 
 		"""
-		self.chessboard = ChessBoard.ChessBoard()
-		self.chessboard.setFEN(chessboard.getFEN())
+		self.chessboard = copy.deepcopy(chessboard)
 		self.white = white
 		self.current_move = random.choice(get_all_valid_moves(chessboard))
 		self.branches = [Branch(move) for move in get_all_valid_moves(self.chessboard)]
@@ -61,17 +71,6 @@ class BoardEvaluation(object):
 			level += 1
 		return self.current_move
 
-
-
-	def find_move_index(self, numbers):
-		"""Takes in a list of numbers, and retuns the indexes of the maxes."""
-		best = [0]
-		for i in len(numbers):
-			if numbers[i] > numbers[best[0]]:
-				best = [i]
-			elif numbers[i] == numbers[best[0]]:
-				best.append(i)
-		return best
 
 class Branch(object):
 
@@ -95,8 +94,7 @@ class Branch(object):
 			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True)
 			0
 			>>> '''
-		self.chessboard = ChessBoard.ChessBoard()
-		self.chessboard.setFEN(chessboard.getFEN())
+		self.chessboard = copy.deepcopy(chessboard) 
 		self.chessboard.addMove(self.move[0], self.move[1])
 		self.branches = [Branch(move) for move in get_all_valid_moves(self.chessboard)]
 		self.is_setup = True
@@ -107,8 +105,6 @@ class Branch(object):
 		if not self.is_setup:
 			self.setup(chessboard)
 		if level == 0:
-			print self.move
-			self.chessboard.printBoard()
 			return BoardEvaluator(self.chessboard, white)
 		if not self.branches:
 			#I'm pretty sure this bit will result in the program being absolutly, completely, unwilling to win.
@@ -117,11 +113,11 @@ class Branch(object):
 		if maxplayer:
 			return max([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, worst_value) for i in xrange(len(self.branches))])
 		else:
-			if not best_value:
-				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator) for i in xrange(len(self.branches))])
-			current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, worst_value)
+			if not worst_value:
+				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white) for i in xrange(len(self.branches))])
+			current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, worst_value)
 			counter = 0
-			while current_value>best_value and counter<len(self.branches):
+			while current_value>worst_value and counter<len(self.branches):
 				current_value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, worst_value)
 				counter += 1
 			return current_value
