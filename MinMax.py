@@ -64,8 +64,16 @@ class BoardEvaluation(object):
 		max_time = time.time() + max_time
 		while time.time() < max_time: #Doesn't account for timeout occuring durring the loop. Will fix soon.
 			if self.branches:
-				evaluations = [move.evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white) for move in self.branches]
-				self.current_move = self.branches[random.choice(find_move_index(evaluations))].move
+				worst_value = self.branches[0].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time)
+				evaluations = [worst_value]
+				counter = 1
+				while time.time() < max_time and counter < len(self.branches):
+					evaluations.append(self.branches[counter].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time, worst_value))
+					if evaluations[counter] < worst_value:
+						worst_value = evaluations[counter]
+					counter += 1
+				if evaluations == len(self.branches): #If this layer's calculations are done, return the best move.
+					self.current_move = self.branches[random.choice(find_move_index(evaluations))].move #Fine the actual move for the best branch
 			else:
 				return None #Might want to fix this. I can't imagine it ever returning, for what I'm doing now, but it could probably break something 
 			level += 1
@@ -91,7 +99,7 @@ class Branch(object):
 			>>> a_branch.setup(chessboard)
 			>>> print a_branch.is_setup
 			True
-			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True)
+			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True, time.time() + 30)
 			0
 			>>> '''
 		self.chessboard = copy.deepcopy(chessboard) 
@@ -99,7 +107,7 @@ class Branch(object):
 		self.branches = [Branch(move) for move in get_all_valid_moves(self.chessboard)]
 		self.is_setup = True
 
-	def evaluate(self, chessboard, maxplayer, level, BoardEvaluator, white, worst_value = None):
+	def evaluate(self, chessboard, maxplayer, level, BoardEvaluator, white, max_time, worst_value = None):
 		''' Evaluates current board value recursively.
 		'''
 		if not self.is_setup:
@@ -111,14 +119,19 @@ class Branch(object):
 			#We should fix that. But right now I just want to see if it is willing to play.
 			return BoardEvaluator(self.chessboard, white)
 		if maxplayer:
-			return max([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, worst_value) for i in xrange(len(self.branches))])
+			counter = 1
+			evaluations = [self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)]
+			while time.time() < max_time and counter < len(self.branches):
+				evaluations.append(self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value))
+				counter += 1
+			return max(evaluations)
 		else:
-			if not worst_value:
-				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white) for i in xrange(len(self.branches))])
-			current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, worst_value)
+			if not worst_value: #TODO: Make this bit less stupid. It doesn't do time evaluation, and won't break anything, but just doesn't seem right
+				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time) for i in xrange(len(self.branches))])
+			current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)
 			counter = 0
-			while current_value>worst_value and counter<len(self.branches):
-				current_value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, worst_value)
+			while time.time() < max_time and current_value>worst_value and counter<len(self.branches):
+				current_value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)
 				counter += 1
 			return current_value
 
