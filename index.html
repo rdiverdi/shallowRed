@@ -36,6 +36,10 @@
 
 <p>We are making a chess AI, beginning with minmax searching and alpha-beta pruning, then incorporating neural networks and evolutionary algorithms to optimize the performance.</p>
 
+<p>
+  Reflection of design review - <a href="Review1.odt">here</a>
+</p>
+
 <h3>
 <a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preparation and Framing</h3>
 
@@ -46,18 +50,18 @@
 
 <p>
   Chess AIs generally start with a min-max search algorithm which looks a certain number of moves ahead and evaluates
-  the board to find the best move. The "best move" is defined as the move which has the least risk associated with it, 
+  the board to find the best move. The "best move" is defined as the move which has the least risk associated with it,
   where risk is the outcome with the most loss.  Loss is often measured by giving a value to each piece, which is then
   added or subtracted when that piece is captured or lost. There are some other methods of evaluating boards which are
   discussed below. <br>
-  Alpha-beta pruning is a meathod for speeding up the min-max algorithm by ignoring branches of the seach tree 
+  Alpha-beta pruning is a meathod for speeding up the min-max algorithm by ignoring branches of the seach tree
   which are obviously worse than already checked branches. <br>
-  Evolutionary algorithms can be used to optimize min-max search algorithms by adjusting the weights of each piece 
-  to improve the AI's chances of winning. This was the focus of Michael and Dennis' project last year, showing that 
+  Evolutionary algorithms can be used to optimize min-max search algorithms by adjusting the weights of each piece
+  to improve the AI's chances of winning. This was the focus of Michael and Dennis' project last year, showing that
   this project direction is within the scope of a soft-des project. <br>
   Another machine learning approach is neural networks. These have taken two different approaches in the past.
   The first option is using a neural network to evaluate board positions, and tell whether or not it's good for
-  the player. Computers working this way still use the classic min-max strategy, but are simply supposed to do their 
+  the player. Computers working this way still use the classic min-max strategy, but are simply supposed to do their
   calculations more quickly. The other option is using a network to directly predict what move is best, rather than
   just evaluating what board positions are best. These networks are much more interesting, and much faster, but also
   more complicated to impliment.
@@ -70,7 +74,7 @@
 
 <p>
   Is it better to make our own basic AI and work from there, or start with someome else's and focus on extensions? <br>
-  What is an interesting "new" direction to take chess AIs (for example, evolutionary algorithms for peice weights, 
+  What is an interesting "new" direction to take chess AIs (for example, evolutionary algorithms for peice weights,
   neural networks for more informative board evaluations, other cool ideas)?
 </p>
 
@@ -84,21 +88,21 @@
   &nbsp; -Talk about how computers play chess <br>
   &nbsp; &nbsp; &nbsp; -computers are effient but play in a boring and computationally intensive manner <br>
   &nbsp; -We want to use a new approach to play chess in a more interesting manner <br><br>
-  
+
   Ideation for ways to computationally play chass: <br>
   &nbsp; -Get some ideas for potential approaches before we give any background on existing algorithms <br><br>
-  
+
   Discuss existing algorithms: <br>
   &nbsp; -Explain min-max searches and alpha-beta pruning <br>
   &nbsp; &nbsp; &nbsp; -pieces are weighted and lost/captured pieces are used to value moves <br><br>
-  
+
   Explain ideas for improvements: <br>
   &nbsp; -Evolutionary algorithms <br>
   &nbsp; &nbsp; &nbsp; -improve weighting for pieces in min-max searching by optimizing the weights with evolutionary algorithms <br>
   &nbsp; -Neural networks <br>
   &nbsp; &nbsp; &nbsp; -Use a database of past chess games to decide on a move based on analysis of board positions.
 </p>
-  
+
 </section>
     </div>
 
@@ -110,7 +114,7 @@
       </footer>
     </div>
 
-    
+
 
   </body>
 </html>
