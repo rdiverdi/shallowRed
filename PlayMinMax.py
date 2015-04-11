@@ -10,12 +10,13 @@ def AI_Move(chessboard, white, max_time):
 	evaluation = MinMax.BoardEvaluation(chessboard, white, MinMax.evaluate_board)
 	curr_time = time.time()
 	AI_move = evaluation.evaluate(max_time)
-	print "Turn calculation took: " + str(curr_time - time.time()) + " seconds"
+	print "Turn calculation took: " + str(time.time() - curr_time) + " seconds"
 	chessboard.addMove(AI_move[0], AI_move[1])
 	chessboard.printBoard()
 
 def playerMove(chessboard, move):
 	thingie = chessboard.addTextMove(move)
+	chessboard.printBoard()
 	
 	return thingie
 
