@@ -62,7 +62,7 @@ class BoardEvaluation(object):
 	def evaluate(self, max_time):
 		level = 0
 		max_time = time.time() + max_time
-		while time.time() < max_time: #Doesn't account for timeout occuring durring the loop. Will fix soon.
+		while time.time() < max_time:
 			if self.branches:
 				worst_value = self.branches[0].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time)
 				evaluations = [worst_value]
@@ -77,6 +77,7 @@ class BoardEvaluation(object):
 			else:
 				return None #Might want to fix this. I can't imagine it ever returning, for what I'm doing now, but it could probably break something 
 			level += 1
+		print 'Level reached: ' + str(level)
 		return self.current_move
 
 
@@ -114,26 +115,38 @@ class Branch(object):
 			self.setup(chessboard)
 		if level == 0:
 			return BoardEvaluator(self.chessboard, white)
-		if not self.branches:
-			#I'm pretty sure this bit will result in the program being absolutly, completely, unwilling to win.
-			#We should fix that. But right now I just want to see if it is willing to play.
-			return BoardEvaluator(self.chessboard, white)
-		if maxplayer:
+		if not self.branches: #Deals with a game that is over.
+			if chessboard.getGameResult() == ChessBoard.WHITE_WIN:
+				if white:
+					return float('Inf')
+				else:
+					return -float('Inf')
+			elif chessboard.getGameResult() == ChessBoard.BLACK_WIN:
+				if white:
+					return -float('Inf')
+				else:
+					return float('Inf')
+			else:
+				return BoardEvaluator(self.chessboard, white) #TODO: better draw handling
+		if maxplayer: #Looks for the largest possible value, because it needs to find the biggest payoff
 			counter = 1
 			evaluations = [self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)]
 			while time.time() < max_time and counter < len(self.branches):
 				evaluations.append(self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value))
 				counter += 1
 			return max(evaluations)
-		else:
+		else: #Looks for a value worse than the current worst case scenario
 			if not worst_value: #TODO: Make this bit less stupid. It doesn't do time evaluation, and won't break anything, but just doesn't seem right
 				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time) for i in xrange(len(self.branches))])
-			current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)
-			counter = 0
-			while time.time() < max_time and current_value>worst_value and counter<len(self.branches):
-				current_value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)
-				counter += 1
-			return current_value
+			else:
+				current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)
+				counter = 0
+				while time.time() < max_time and current_value>worst_value and counter<len(self.branches):
+					value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)
+					if value < current_value:
+						current_value = value
+					counter += 1
+				return current_value
 
 if __name__ == '__main__':
     import doctest
