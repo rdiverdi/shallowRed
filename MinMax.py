@@ -2,6 +2,7 @@ import time
 import random
 import copy
 import ChessBoard
+#TODO: Delete all of the TODOS. They weren't important anyways.
 
 piece_values = {'P':1, 'N':3, 'B':3, 'R':5, 'Q':9, 'K':102, 'p':-1, 'n':-3, 'b':-3, 'r':-5, 'q':-9, 'k':-102}
 
@@ -23,12 +24,13 @@ def evaluate_board(chessboard, white, piece_values = piece_values):
 			if char in piece_values:
 				value += piece_values[char]
 
-	if white:
+	if white: #The black evaluation should be symetrical, but in its own favor.
 		return value
 	else:
 		return -value
 
 def get_all_valid_moves(chessboard):
+	"""Returns a list of all possible moves, using the built in function for getting moves on a square"""
 	moves = []
 	for i in xrange(8):
 		for j in xrange(8):
@@ -64,13 +66,13 @@ class BoardEvaluation(object):
 		max_time = time.time() + max_time
 		while time.time() < max_time:
 			if self.branches:
-				worst_value = self.branches[0].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time)
-				evaluations = [worst_value]
+				best_value = self.branches[0].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time)
+				evaluations = [best_value]
 				counter = 1
 				while time.time() < max_time and counter < len(self.branches):
-					evaluations.append(self.branches[counter].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time, worst_value))
-					if evaluations[counter] < worst_value:
-						worst_value = evaluations[counter]
+					evaluations.append(self.branches[counter].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time, best_value))
+					if evaluations[counter] < best_value:
+						best_value = evaluations[counter]
 					counter += 1
 				if evaluations == len(self.branches): #If this layer's calculations are done, return the best move.
 					self.current_move = self.branches[random.choice(find_move_index(evaluations))].move #Fine the actual move for the best branch
@@ -106,16 +108,17 @@ class Branch(object):
 		self.chessboard = copy.deepcopy(chessboard) 
 		self.chessboard.addMove(self.move[0], self.move[1])
 		self.branches = [Branch(move) for move in get_all_valid_moves(self.chessboard)]
-		self.is_setup = True
+		self.is_setup = True #Lets the branch exist with minimal processing, for alpha-beta pruning
 
-	def evaluate(self, chessboard, maxplayer, level, BoardEvaluator, white, max_time, worst_value = None):
+	def evaluate(self, chessboard, maxplayer, level, BoardEvaluator, white, max_time, best_value = None):
 		''' Evaluates current board value recursively.
 		'''
 		if not self.is_setup:
-			self.setup(chessboard)
+			self.setup(chessboard) #Creates a new chessboard object, makes a move on it, and finds all of the possible moves
 		if level == 0:
 			return BoardEvaluator(self.chessboard, white)
 		if not self.branches: #Deals with a game that is over.
+			#TODO: Diversify results, so that it will always go for the fastest win
 			if chessboard.getGameResult() == ChessBoard.WHITE_WIN:
 				if white:
 					return float('Inf')
@@ -130,19 +133,19 @@ class Branch(object):
 				return BoardEvaluator(self.chessboard, white) #TODO: better draw handling
 		if maxplayer: #Looks for the largest possible value, because it needs to find the biggest payoff
 			counter = 1
-			evaluations = [self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)]
+			evaluations = [self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)]
 			while time.time() < max_time and counter < len(self.branches):
-				evaluations.append(self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value))
+				evaluations.append(self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value))
 				counter += 1
 			return max(evaluations)
-		else: #Looks for a value worse than the current worst case scenario
-			if not worst_value: #TODO: Make this bit less stupid. It doesn't do time evaluation, and won't break anything, but just doesn't seem right
+		else: #Looks for a value worse than the current worst case scenario. Returns the first value that fits the criteria
+			if not best_value: #TODO: Make this bit less stupid. It doesn't do time evaluation, and won't break anything, but just doesn't seem right
 				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time) for i in xrange(len(self.branches))])
 			else:
-				current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)
+				current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)
 				counter = 0
-				while time.time() < max_time and current_value>worst_value and counter<len(self.branches):
-					value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, worst_value)
+				while time.time() < max_time and current_value>=best_value and counter<len(self.branches):
+					value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)
 					if value < current_value:
 						current_value = value
 					counter += 1
