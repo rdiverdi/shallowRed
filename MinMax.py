@@ -119,12 +119,12 @@ class Branch(object):
 			return BoardEvaluator(self.chessboard, white)
 		if not self.branches: #Deals with a game that is over.
 			#TODO: Diversify results, so that it will always go for the fastest win
-			if chessboard.getGameResult() == ChessBoard.WHITE_WIN:
+			if chessboard.getGameResult() == chessboard.WHITE_WIN: #1 means that white has won
 				if white:
 					return float('Inf')
 				else:
 					return -float('Inf')
-			elif chessboard.getGameResult() == ChessBoard.BLACK_WIN:
+			elif chessboard.getGameResult() == chessboard.BLACK_WIN: #2 means that black has won
 				if white:
 					return -float('Inf')
 				else:

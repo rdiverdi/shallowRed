@@ -17,6 +17,41 @@ def AI_Move(chessboard, white, max_time):
 def playerMove(chessboard, move):
 	thingie = chessboard.addTextMove(move)
 	chessboard.printBoard()
-	
 	return thingie
+
+def requestPlayerMove(chessboard):
+	move = raw_input("Please enter a move:\n")
+	valid_move = playerMove(chessboard, move)
+	while not valid_move:
+		move = raw_input("That is not a valid move. Enter another:\n")
+		valid_move = playerMove(chessboard, move)
+
+def main():
+	board = ChessBoard.ChessBoard()
+	AI_color = raw_input("Which color should the AI take? [w/b]\n")
+	AI_time = 17
+	while AI_color not in 'wb':
+		AI_color = raw_input("That is neither 'w' nor 'b'. Try again. [w/b]\n")
+
+	board.printBoard()
+	white_turn = True
+	while not board.isGameOver():
+		if white_turn:
+			if AI_color == 'w':
+				AI_Move(board, True, AI_time)
+			else:
+				requestPlayerMove(board)
+		else:
+			if AI_color == 'w':
+				requestPlayerMove(board)
+			else:
+				AI_Move(board, False, AI_time)
+		white_turn = not white_turn
+
+	print board.getGameResult()
+	raw_input("Press any key to quit.")
+
+if __name__ == '__main__':
+	main()
+
 
