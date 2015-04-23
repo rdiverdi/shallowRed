@@ -15,7 +15,7 @@
 
 from copy import deepcopy
 from pprint import pprint
-import pygame
+#import pygame
 
 #MB 03/30: Promotion options already written in, just need to remove hard coding
 #of Queen promotion value, maybe add a pop-up menu to select piece
@@ -101,7 +101,7 @@ class ChessBoard:
 
     def __init__(self):
         self.resetBoard()
-        self.posRect = pygame.Rect(0,0,60,60)
+        #self.posRect = pygame.Rect(0,0,60,60)
         self.mousePos = [-1,-1]
         self.markPos = [-1,-1]
         self.validMoves = []

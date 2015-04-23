@@ -24,7 +24,7 @@ def evaluate_board(chessboard, white, piece_values = piece_values):
 			if char in piece_values:
 				value += piece_values[char]
 
-	if white: #The black evaluation should be symetrical, but in its own favor.
+	if white: #The black evaluation should be symetrical, but in its own favor. I think. 
 		return value
 	else:
 		return -value
@@ -51,7 +51,7 @@ def find_move_index(numbers):
 
 class BoardEvaluation(object):
 
-	def __init__(self, chessboard, white, BoardEvaluator):
+	def __init__(self, chessboard, white, BoardEvaluator = evaluate_board):
 		"""	chessboard: an instance of ChessBoard
 			white: whether the 
 		"""
