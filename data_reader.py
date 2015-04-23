@@ -43,6 +43,13 @@ def did_I_win(win, white):
 
 boards = {}
 for game in games:
+	'''Stores in a dicionary:
+		key: (board state in FEN notation, white's turn boolean) as a tuple
+		value: dictionary of moves
+
+		in the dictionary of moves:
+		key: the move tuple
+		value: [wins, losses, draws] by number'''
 	chessboard = ChessBoard.ChessBoard()
 	win = who_won(game)
 	white = True
