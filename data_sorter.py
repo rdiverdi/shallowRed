@@ -2,18 +2,15 @@
 	datasets."""
 import pickle
 
-file_list = []
-for i in range(1999,2013):
-	file_list.append(str(i) + '_data.txt')
 
-Giant_White_Dataset = {}
-Giant_Black_Dataset = {}
-
-for filename in file_list:
+def process_file(filename, Giant_White_Dataset, Giant_Black_Dataset):
 	print "Processing File: " + filename
-	f = open(filename, 'r')
-	board_dictionary = pickle.load(f)
-	f.close()
+	try:
+		f = open(filename, 'r')
+		board_dictionary = pickle.load(f)
+		f.close()
+	except EOFError:
+		return Giant_White_Dataset, Giant_Black_Dataset
 
 	for board_state in board_dictionary:
 		move_dict = board_dictionary[board_state]
@@ -41,11 +38,24 @@ for filename in file_list:
 						Giant_Black_Dataset[board_state[0]][move][2] += move_dict[move][2]
 					else:
 						Giant_Black_Dataset[board_state[0]][move] = move_dict[move]
+	return Giant_White_Dataset, Giant_Black_Dataset
 
-f = open('Giant_Black_Dataset.txt', 'w')
-pickle.dump(Giant_Black_Dataset, f)
-f.close()
+if __name__ == '__main__':	
+	file_list = []
+	for i in range(1999,2013):
+		file_list.append(str(i) + '_data.txt')
 
-f = open('Giant_White_Dataset.txt', 'w')
-pickle.dump(Giant_White_Dataset, f)
-f.close()
+	Giant_White_Dataset = {}
+	Giant_Black_Dataset = {}
+
+	for filename in file_list:
+		Giant_White_Dataset, Giant_Black_Dataset = process_file(filename, Giant_White_Dataset, Giant_Black_Dataset)
+
+
+	f = open('Giant_Black_Dataset.txt', 'w')
+	pickle.dump(Giant_Black_Dataset, f)
+	f.close()
+
+	f = open('Giant_White_Dataset.txt', 'w')
+	pickle.dump(Giant_White_Dataset, f)
+	f.close()
