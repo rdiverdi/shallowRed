@@ -6,8 +6,8 @@ from pybrain.structure import LinearLayer, SigmoidLayer, FullConnection, FeedFor
 def create_network():
 	network = FeedForwardNetwork()
 
-	#Creating an input layer equal to 12 chessboards: 1 for each type of piece
-	inlayer = LinearLayer(768)
+	#Creating an input layer equal to 12 chessboards: 1 board for each type of piece
+	inlayer = LinearLayer(768) #12 boards = 12*64 = 768 nodes
 	hidden1 = SigmoidLayer(2048)
 	hidden2 = SigmoidLayer(2048)
 	hidden3 = SigmoidLayer(2048)
@@ -41,16 +41,37 @@ def create_network():
 ######## Dictionary Processing #######
 ######################################
 def dictionary_to_dataset(board_data):
-	dataset = SupervisedDataSet(768, 128)
+	dataset = SupervisedDataSet(12*64, 2*64) #12 board input, 2 board output (12 or 2 *64)
 	for board, move_dict in board_data:
-		pass
+		dataset.addSample(create_board_input(board),create_board_result(move_dict))
+	return dataset
+
+def create_board_result(move_dict):
+	""" Takes in a move dictionary from a board, and returns a tuple describing the propper output.
+
+		Tuple structure: two boards, each represented by a portion of the list with 64 entries
+		Each board should have one position with a 1 in it 
+		(the position a piece comes from, the position it goes to)"""
+	output = [0 for i in xrange(2*64)] #From chessboard and to chessboard (64 inputs each)
+	move = best_move(move_dict)
+	from_square = move[0]
+	to_quare = move[1]
+
+	from_index = from_square[0]*8 + from_square[1]
+	output[from_index] = 1
+	to_index = 64 + to_square[0]*8 + to_square[1] #64 is to get to the next list
+	output[to_index] = 1
+
+	return tuple(output)
+
 
 def create_board_input(board):
-	'''Takes in the board part of the FEN string, outputs representative tuple'''
-	#Tuple structure: Pawns, knights, bishops, rooks, queens, kings, oponents pieces
+	""" Takes in the board part of the FEN string, outputs representative tuple
 
-	output = [0 for i i(rows):n xrange(768)]
-	index_dict = ['P':0, 'N':64, 'B':128, 'R':192, 'Q':256, 'K':320, 'p':384, 'n':448, 'b':512, 'r': 576, 'q':640, 'k':704]
+		Tuple structure: Pawns, knights, bishops, rooks, queens, kings, oponents pieces"""
+
+	output = [0 for i in xrange(12*64)] #12 chessboards in a row, in list form
+	index_dict = {'P':0, 'N':64, 'B':2*64, 'R':3*64, 'Q':4*64, 'K':5*64, 'p':6*64, 'n':7*64, 'b':8*64, 'r': 9*64, 'q':10*64, 'k':11*64}
 
 	rows = board.split("/")
 	for index, row in enumerate(rows):
@@ -70,6 +91,8 @@ def create_board_input(board):
 
 
 def best_move(move_dict):
+	""" Takes in a dictionary of moves:win/loss/draw rates, and returns a decent one
+	"""
 	best_move = None
 	for move, value in move_dict:
 		if not best_move:
@@ -83,12 +106,18 @@ def best_move(move_dict):
 	return best_move
 
 def win_rate(move_list):
+	""" Takes in a list, [wins, losses, draws] and returns the percent of wins
+	"""
 	return move_list[0]/float(sum(move_list))
 
 def loss_rate(move_list):
+	""" Takes in a list, [wins, losses, draws] and returns the percent of losses
+	"""
 	return move_list[1]/float(sum(move_list))
 
 def draw_rate(move_list):
+	""" Takes in a list, [wins, losses, draws] and returns the percent of draws
+	"""
 	return move_list[2]/float(sum(move_list))
 
 ######################################
