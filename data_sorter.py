@@ -10,6 +10,7 @@ Giant_White_Dataset = {}
 Giant_Black_Dataset = {}
 
 for filename in file_list:
+	print "Processing File: " + filename
 	f = open(filename, 'r')
 	board_dictionary = pickle.load(f)
 	f.close()
