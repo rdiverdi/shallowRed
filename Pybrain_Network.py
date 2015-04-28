@@ -127,11 +127,14 @@ def draw_rate(move_list):
 ######################################
 
 if __name__ == '__main__':
+	print "Creating Network"
 	network = create_network()
+	print "Opening Data File"
 	f = open("Giant_White_Dataset.txt", 'r')
 	large_dict = pickle.load(f)
 	f.close()
 
+	print "Getting Keys"
 	keys = large_dict.keys()
 	newdict = {}
 	print "Sorting Dataset"
