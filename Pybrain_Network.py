@@ -166,7 +166,7 @@ if __name__ == '__main__':
 	for i in xrange(500):
 		result = trainer.train()
 		print "Epoch %: %"%(str(i), result)
-
+		
 	f = open("Saved_Network.txt")
 	pickle.dump(trainer, f)
 	f.close()
