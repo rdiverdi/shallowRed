@@ -124,7 +124,7 @@ def best_move(move_dict):
 		elif win_rate(value) == win_rate(best_move[1]) and draw_rate(value) > draw_rate(best_move[1]):
 			best_move = [move, value]
 
-	return best_move
+	return best_move[0]
 
 def win_rate(move_list):
 	""" Takes in a list, [wins, losses, draws] and returns the percent of wins
