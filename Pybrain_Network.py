@@ -49,6 +49,23 @@ def dictionary_to_dataset(board_data):
 		dataset.addSample(create_board_input(board),create_board_result(move_dict))
 	return dataset
 
+def dictionary_stripper(filename, White = True):
+	""" This function returns only the boards for one side from one
+		of our weird files.
+	"""
+	f = open(filename, 'r')
+	dictionary = pickle.load(f)
+	f.close()
+
+	newDict = {}
+	for boardstate in dictionary:
+		if boardstate[1] and White:
+			newDict[boardstate[0]] = dictionary[boardstate]
+		elif not boardstate[1] and not White:
+			newDict[boardstate[0]] = dictionary[boardstate]
+
+	return newDict
+
 def create_board_result(move_dict):
 	""" Takes in a move dictionary from a board, and returns a tuple describing the propper output.
 
@@ -130,20 +147,20 @@ if __name__ == '__main__':
 	print "Creating Network"
 	network = create_network()
 	print "Opening Data File"
-	f = open("Giant_White_Dataset.txt", 'r')
+	f = open("2000_data.txt", 'r')
 	large_dict = pickle.load(f)
 	f.close()
 
-	print "Getting Keys"
-	keys = large_dict.keys()
-	newdict = {}
-	print "Sorting Dataset"
-	for i in xrange(20000):
-		key = keys[random.randint(len(keys))]
-		newdict[key] = large_dict[key]
+	# print "Getting Keys"
+	# keys = large_dict.keys()
+	# newdict = {}
+	# print "Sorting Dataset"
+	# for i in xrange(20000):
+	# 	key = keys[random.randint(len(keys))]
+	# 	newdict[key] = large_dict[key]
 
 	print "Training Dataset"
-	dataset = dictionary_to_dataset(newdict)
+	dataset = dictionary_to_dataset(large_dict)
 	trainer = BackpropTrainer(network, dataset)
 	for i in xrange(500):
 		result = trainer.train()
