@@ -115,13 +115,13 @@ def best_move(move_dict):
 	""" Takes in a dictionary of moves:win/loss/draw rates, and returns a decent one
 	"""
 	best_move = None
-	for move, value in move_dict:
+	for move, value in move_dict.iteritems():
 		if not best_move:
 			best_move = [move, value]
 
 		if win_rate(value) > win_rate(best_move[1]):
 			best_move = [move, value]
-		elif win_rate(value) == win_rate(best_move[1]) and draw_rate(value) < draw_rate(best_move[1]):
+		elif win_rate(value) == win_rate(best_move[1]) and draw_rate(value) > draw_rate(best_move[1]):
 			best_move = [move, value]
 
 	return best_move
@@ -148,7 +148,7 @@ if __name__ == '__main__':
 	print "Creating Network"
 	network = create_network()
 	print "Opening Data File"
-	large_dict = dictionary_stripper("2000_data.txt")
+	large_dict = dictionary_stripper("1999_data.txt")
 
 	# print "Getting Keys"
 	# keys = large_dict.keys()
