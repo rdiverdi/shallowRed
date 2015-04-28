@@ -3,6 +3,7 @@
 import pybrain
 from pybrain.structure import LinearLayer, SigmoidLayer, FullConnection, FeedForwardNetwork
 from pybrain.supervised.trainers import BackpropTrainer
+from pybrain.datasets import SupervisedDataSet
 import pickle
 import random
 
