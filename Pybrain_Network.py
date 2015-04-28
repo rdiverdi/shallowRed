@@ -46,7 +46,7 @@ def create_network():
 ######################################
 def dictionary_to_dataset(board_data):
 	dataset = SupervisedDataSet(12*64, 2*64) #12 board input, 2 board output (12 or 2 *64)
-	for board, move_dict in board_data:
+	for board, move_dict in board_data.iteritems():
 		dataset.addSample(create_board_input(board),create_board_result(move_dict))
 	return dataset
 
