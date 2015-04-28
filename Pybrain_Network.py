@@ -148,9 +148,7 @@ if __name__ == '__main__':
 	print "Creating Network"
 	network = create_network()
 	print "Opening Data File"
-	f = open("2000_data.txt", 'r')
-	large_dict = dictionary_stripper(pickle.load(f))
-	f.close()
+	large_dict = dictionary_stripper("2000_data.txt")
 
 	# print "Getting Keys"
 	# keys = large_dict.keys()
@@ -166,7 +164,7 @@ if __name__ == '__main__':
 	for i in xrange(500):
 		result = trainer.train()
 		print "Epoch %: %"%(str(i), result)
-		
+
 	f = open("Saved_Network.txt")
 	pickle.dump(trainer, f)
 	f.close()
