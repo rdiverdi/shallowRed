@@ -2,6 +2,9 @@
 
 import pybrain
 from pybrain.structure import LinearLayer, SigmoidLayer, FullConnection, FeedForwardNetwork
+from pybrain.supervised.trainers import BackpropTrainer
+import pickle
+import random
 
 def create_network():
 	network = FeedForwardNetwork()
@@ -125,6 +128,24 @@ def draw_rate(move_list):
 
 if __name__ == '__main__':
 	network = create_network()
-	print network
+	f = open("Giant_White_Dataset.txt", 'r')
+	large_dict = pickle.load(f)
+	f.close()
 
+	keys = large_dict.keys()
+	newdict = {}
+	print "Sorting Dataset"
+	for i in xrange(20000):
+		key = keys[random.randint(len(keys))]
+		newdict[key] = large_dict[key]
 
+	print "Training Dataset"
+	dataset = dictionary_to_dataset(newdict)
+	trainer = BackpropTrainer(network, dataset)
+	for i in xrange(500):
+		result = trainer.train()
+		print "Epoch %: %"%(str(i), result)
+
+	f = open("Saved_Network.txt")
+	pickle.dump(trainer, f)
+	f.close()
