@@ -149,7 +149,7 @@ if __name__ == '__main__':
 	network = create_network()
 	print "Opening Data File"
 	f = open("2000_data.txt", 'r')
-	large_dict = pickle.load(f)
+	large_dict = dictionary_stripper(pickle.load(f))
 	f.close()
 
 	# print "Getting Keys"
