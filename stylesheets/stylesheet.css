@@ -423,3 +423,29 @@ Small Device Styles
   }
 
 }
+
+
+/* nav bar */
+#nav_li {
+ display: inline;
+ float: left;
+ background: #505050;
+ padding-left: 20px;
+ padding-right: 20px;
+}
+
+#nav_a {
+  font-size: 22px;
+  color: #121212;
+  text-align: center;
+}
+
+#nav_ul {
+  position: relative;
+  margin-left: 100px
+}
+
+/* other stuff */
+#link {
+  color: #212121;
+}

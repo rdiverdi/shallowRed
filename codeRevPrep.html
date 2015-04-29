@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Shallowred : such chess">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Shallowred</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/rdiverdi/shallowRed">View on GitHub</a>
+
+          <h1 id="project_title"><a id="project_title" href="index.html">Shallowred</a></h1>
+          <h2 id="project_tagline">such chess</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/rdiverdi/shallowRed/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/rdiverdi/shallowRed/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+    <!--navigation bar -->
+
+    <ul id="nav_ul">
+      <li id="nav_li"><a id="nav_a" href="index.html">Home</a></li>
+      <li id="nav_li"><a id="nav_a" href="deliverables.html">Deliverables</a></li>
+      <li id="nav_li"><a id="nav_a" href="contact.asp">Play our AI</a></li>
+      <li id="nav_li"><a id="nav_a" href="about.asp">Acknowledgements</a></li>
+    </ul>
+
+
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="link" href="deliverables.html">Mid-Project Deliverables:</a></h2>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code Review - Preparation and Framing</h3>
+
+<h4>
+  <a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+  Background Information
+</h4>
+
+<p>
+  &nbsp;&nbsp;&nbsp;&nbsp; Min-max AI algorithms search through potential moves, looking as many moves ahead as they can in the allotted time.  We explained this during our design review. This method is the basis for chess supercomputers like Deep Blue, which can compete with the best chess players in the world simply by looking farther into the game than people can predict.  We, however, are examining neural networks, which study past games to learn how chess games usually play out, then they can use a simple, learned algorithm to choose moves efficiently, rather than brute forcing their way through many calculations on the spot.  There are two methods of implementing neural networks in a chess AI.  One is to use the network to evaluate a board state and output a move, therefore eliminating all foresight and using only information learned from past games.  The other method is to continue using the min-max tree, but to replace the final evaluation function with a neural network function which calculates the value of each board at the bottom of the tree to decide on the final move.  The first method has a more direct output and requires less time during the game, but it is much more difficult to implement.  The second method is much simpler to implement because the output can be compared to a desired output in a binary fashion (random moves should always be worse than actual moves made), but it still uses the min-max tree, and is therefore limited by the time it is given during the actual game.
+
+</p>
+
+<h4>
+ <a id="rather-drive-stick" class="anchor" href="#rather-drive-stick" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+ Key Questions
+</h4>
+
+<p>
+  How should we incorporate neural networks into our AI? <br>
+  Are there any inefficiencies in our current code?
+</p>
+
+<h4>
+  <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+  Agenda
+</h4>
+
+<p>
+  Review what we have done <br>
+  Introduce our key questions <br>
+  Explain our current code <br>
+  Demo code <br>
+  Discuss our two options for neural networks and open a discussios. <br>
+</p>
+
+</section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Shallowred maintained by <a href="https://github.com/rdiverdi">rdiverdi</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+  </body>
+</html>
