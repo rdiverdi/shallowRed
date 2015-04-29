@@ -76,7 +76,7 @@ def create_board_result(move_dict):
 	output = [0 for i in xrange(2*64)] #From chessboard and to chessboard (64 inputs each)
 	move = best_move(move_dict)
 	from_square = move[0]
-	to_quare = move[1]
+	to_square = move[1]
 
 	from_index = from_square[0]*8 + from_square[1]
 	output[from_index] = 1
