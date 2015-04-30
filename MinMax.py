@@ -82,6 +82,45 @@ class BoardEvaluation(object):
 		print 'Level reached: ' + str(level)
 		return self.current_move
 
+	def eval_by_dict(self, board_dict):
+		""" Takes in a dictionary of boards, 
+			searches for the best move to make at a specific board position, 
+			and outputs that movee in the form of the resultant board.
+			Uses a ratio of possible wins and possible losses of each move, 
+			ignoring draws and giving priority to high ratios with greater overall wins.
+		"""
+		value = -1.
+		best_move = ()
+		best_wins = -1
+		best_losses = -1
+		board = self.chessboard.getFEN().split()[0]
+		if board in board_dict:
+			for moves in board_dict[board]:
+				if board_dict[board][moves][1] == 0
+					if board_dict[board][moves][0] != 0:
+						value = board_dict[board][moves][0]*1000000000
+						best_move = moves
+						best_wins = board_dict[board][moves][0]
+						best_losses = board_dict[board][moves][1]
+					elif value = -1:
+						value = 0
+						best_move = moves
+						best_wins = board_dict[board][moves][0]
+						best_losses = board_dict[board][moves][1]
+				elif float(board_dict[board][moves][0]/board_dict[board][moves][1]) > value:
+					#or if just better move
+					value = float(board_dict[board][moves][0]/board_dict[board][moves][1])
+					best_move = moves
+					best_wins = board_dict[board][moves][0]
+					best losses = board_dict[board][moves][1]
+				elif (float(board_dict[board][moves][0]/board_dict[board][moves][1])=value) and board_dict[board][moves][0]>best_move:
+					#if W=L AND it is better move AND more overall wins
+					value = float(board_dict[board][moves][0]/board_dict[board][moves][1])
+					best_move = moves
+					best_wins = board_dict[board][moves][0]
+					best_losses = board_dict[board][moves][1]
+		return best_move
+
 
 class Branch(object):
 
