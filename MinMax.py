@@ -171,23 +171,24 @@ class Branch(object):
 
 			>>> chessboard = ChessBoard.ChessBoard()
 			>>> chessboard.setFEN("8/8/6p1/6B1/8/8/4k1K1/1Q1qb3 w KQkq - 1 2")
-			>>> a_branch = Branch(((7, 1), (5, 4)))
+			>>> a_branch = Branch(((1, 7), (4, 4)))
 			>>> a_branch.setup(chessboard)
 			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True, time.time() + 30)
 			inf
 		'''
 		if not self.is_setup:
 			self.setup(chessboard) #Creates a new chessboard object, makes a move on it, and finds all of the possible moves
-		if level == 0:
+		if level == -1:
 			return BoardEvaluator(self.chessboard, white)
+
 		if not self.branches: #Deals with a game that is over.
 			#TODO: Diversify results, so that it will always go for the fastest win
-			if chessboard.getGameResult() == chessboard.WHITE_WIN: #1 means that white has won
+			if self.chessboard.getGameResult() == chessboard.WHITE_WIN: #1 means that white has won
 				if white:
 					return float('Inf')
 				else:
 					return -float('Inf')
-			elif chessboard.getGameResult() == chessboard.BLACK_WIN: #2 means that black has won
+			elif self.chessboard.getGameResult() == chessboard.BLACK_WIN: #2 means that black has won
 				if white:
 					return -float('Inf')
 				else:
