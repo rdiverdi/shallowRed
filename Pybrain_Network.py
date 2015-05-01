@@ -46,8 +46,11 @@ def create_network():
 ######################################
 def dictionary_to_dataset(board_data):
 	dataset = SupervisedDataSet(12*64, 2*64) #12 board input, 2 board output (12 or 2 *64)
+	length = str(len(board_data))
+	i = 0
 	for board, move_dict in board_data.iteritems():
 		dataset.addSample(create_board_input(board),create_board_result(move_dict))
+		print "Completed iteration: " + str(i) + '/' + length
 	return dataset
 
 def dictionary_stripper(filename, White = True):
