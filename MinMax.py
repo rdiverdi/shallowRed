@@ -15,6 +15,9 @@ def evaluate_board(chessboard, white, piece_values = piece_values):
 		>>> chessboard = ChessBoard.ChessBoard()
 		>>> evaluate_board(chessboard, True)
 		0
+		>>> chessboard.setFEN("8/8/8/8/8/8/8/7P w KQkq - 0 1")
+		>>> evaluate_board(chessboard, True)
+		1
 	"""
 
 	board = chessboard.getBoard()
@@ -24,13 +27,20 @@ def evaluate_board(chessboard, white, piece_values = piece_values):
 			if char in piece_values:
 				value += piece_values[char]
 
-	if white: #The black evaluation should be symetrical, but in its own favor. I think. 
+	if white: #The black evaluation should be symetrical, but in its own favor. I think.
 		return value
 	else:
 		return -value
 
 def get_all_valid_moves(chessboard):
-	"""Returns a list of all possible moves, using the built in function for getting moves on a square"""
+	"""Returns a list of all possible moves, using the built in function
+		for getting moves on a square
+
+		>>> chessboard = ChessBoard.ChessBoard()
+		>>> chessboard.setFEN("8/8/8/8/8/8/8/7P w KQkq - 0 1")
+		>>> get_all_valid_moves(chessboard)
+		[((7, 7), (7, 6))]
+	"""
 	moves = []
 	for i in xrange(8):
 		for j in xrange(8):
@@ -39,7 +49,13 @@ def get_all_valid_moves(chessboard):
 
 
 def find_move_index(numbers):
-	"""Takes in a list of numbers, and retuns the indexes of the maxes."""
+	"""Takes in a list of numbers, and retuns the indexes of the maxes.
+
+		>>> find_move_index([1, 2, 2, 3, 2, 1])
+		[3]
+		>>> find_move_index([1, 2, 2, 1, 2, 1])
+		[1, 2, 4]
+	"""
 	best = [0]
 	for i in range(len(numbers)):
 		if numbers[i] > numbers[best[0]]:
@@ -53,7 +69,8 @@ class BoardEvaluation(object):
 
 	def __init__(self, chessboard, white, BoardEvaluator = evaluate_board):
 		"""	chessboard: an instance of ChessBoard
-			white: whether the 
+			white: whether it is white's move (boolean)
+			BoardEvaluator: board evaluation function
 		"""
 		self.chessboard = copy.deepcopy(chessboard)
 		self.white = white
@@ -77,16 +94,16 @@ class BoardEvaluation(object):
 				if evaluations == len(self.branches): #If this layer's calculations are done, return the best move.
 					self.current_move = self.branches[random.choice(find_move_index(evaluations))].move #Fine the actual move for the best branch
 			else:
-				return None #Might want to fix this. I can't imagine it ever returning, for what I'm doing now, but it could probably break something 
+				return None #Might want to fix this. I can't imagine it ever returning, for what I'm doing now, but it could probably break something
 			level += 1
 		print 'Level reached: ' + str(level)
 		return self.current_move
 
 	def eval_by_dict(self, board_dict):
-		""" Takes in a dictionary of boards, 
-			searches for the best move to make at a specific board position, 
+		""" Takes in a dictionary of boards,
+			searches for the best move to make at a specific board position,
 			and outputs that movee in the form of the resultant board.
-			Uses a ratio of possible wins and possible losses of each move, 
+			Uses a ratio of possible wins and possible losses of each move,
 			ignoring draws and giving priority to high ratios with greater overall wins.
 		"""
 		value = -1.
@@ -96,13 +113,13 @@ class BoardEvaluation(object):
 		board = self.chessboard.getFEN().split()[0]
 		if board in board_dict:
 			for moves in board_dict[board]:
-				if board_dict[board][moves][1] == 0
+				if board_dict[board][moves][1] == 0:
 					if board_dict[board][moves][0] != 0:
 						value = board_dict[board][moves][0]*1000000000
 						best_move = moves
 						best_wins = board_dict[board][moves][0]
 						best_losses = board_dict[board][moves][1]
-					elif value = -1:
+					elif value == -1:
 						value = 0
 						best_move = moves
 						best_wins = board_dict[board][moves][0]
@@ -112,8 +129,8 @@ class BoardEvaluation(object):
 					value = float(board_dict[board][moves][0]/board_dict[board][moves][1])
 					best_move = moves
 					best_wins = board_dict[board][moves][0]
-					best losses = board_dict[board][moves][1]
-				elif (float(board_dict[board][moves][0]/board_dict[board][moves][1])=value) and board_dict[board][moves][0]>best_move:
+					best_losses = board_dict[board][moves][1]
+				elif (float(board_dict[board][moves][0]/board_dict[board][moves][1])==value) and board_dict[board][moves][0]>best_move:
 					#if W=L AND it is better move AND more overall wins
 					value = float(board_dict[board][moves][0]/board_dict[board][moves][1])
 					best_move = moves
@@ -144,13 +161,20 @@ class Branch(object):
 			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True, time.time() + 30)
 			0
 			>>> '''
-		self.chessboard = copy.deepcopy(chessboard) 
+		self.chessboard = copy.deepcopy(chessboard)
 		self.chessboard.addMove(self.move[0], self.move[1])
 		self.branches = [Branch(move) for move in get_all_valid_moves(self.chessboard)]
 		self.is_setup = True #Lets the branch exist with minimal processing, for alpha-beta pruning
 
 	def evaluate(self, chessboard, maxplayer, level, BoardEvaluator, white, max_time, best_value = None):
 		''' Evaluates current board value recursively.
+
+			>>> chessboard = ChessBoard.ChessBoard()
+			>>> chessboard.setFEN("8/8/6p1/6B1/8/8/4k1K1/1Q1qb3 w KQkq - 1 2")
+			>>> a_branch = Branch(((7, 1), (5, 4)))
+			>>> a_branch.setup(chessboard)
+			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True, time.time() + 30)
+			inf
 		'''
 		if not self.is_setup:
 			self.setup(chessboard) #Creates a new chessboard object, makes a move on it, and finds all of the possible moves
