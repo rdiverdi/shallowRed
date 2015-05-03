@@ -190,7 +190,7 @@ class Branch(object):
 		if maxplayer: #Looks for the largest possible value, because it needs to find tohe biggest payoff
 			return max_evaluation(self, level, BoardEvaluator, white, max_time)
 		else: #Looks for a value worse than the current best case scenario. Returns the first value that fits the criteria
-			
+			return min_evaluation(self, level, BoardEvaluator, white, max_time, best_value)
 
 	def max_evaluation(self, level, BoardEvaluator, white, max_time):
 		"""
