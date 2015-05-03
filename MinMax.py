@@ -188,15 +188,15 @@ class Branch(object):
 		if not self.branches:
 			return self.evaluate_board_state(white, level, BoardEvaluator)
 		if maxplayer: #Looks for the largest possible value, because it needs to find tohe biggest payoff
-			return max_evaluation(self, level, BoardEvaluator, white, max_time)
+			return self.max_evaluation(level, BoardEvaluator, white, max_time, best_value)
 		else: #Looks for a value worse than the current best case scenario. Returns the first value that fits the criteria
-			return min_evaluation(self, level, BoardEvaluator, white, max_time, best_value)
+			return self.min_evaluation(level, BoardEvaluator, white, max_time, best_value)
 
-	def max_evaluation(self, level, BoardEvaluator, white, max_time):
+	def max_evaluation(self, level, BoardEvaluator, white, max_time, best_value):
 		"""
 		"""
 		counter = 1
-		evaluations = [self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)]
+		evaluations = [self.branches[0].evaluate(self.chessboard, False, level-1, BoardEvaluator, white, max_time, best_value)]
 		while time.time() < max_time and counter < len(self.branches):
 			evaluations.append(self.branches[counter].evaluate(self.chessboard, 
 								False, #sets next evaluation to be minimizing
@@ -213,9 +213,9 @@ class Branch(object):
 		"""
 		"""
 		if not best_value: #TODO: Make this bit less stupid. It doesn't do time evaluation, and won't break anything, but just doesn't seem right
-				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time) for i in xrange(len(self.branches))])
+				return min([self.branches[i].evaluate(self.chessboard, True, level-1, BoardEvaluator, white, max_time) for i in xrange(len(self.branches))])
 		else:
-			current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)
+			current_value = self.branches[0].evaluate(self.chessboard, True, level-1, BoardEvaluator, white, max_time, best_value)
 			counter = 0
 			while time.time() < max_time and current_value>=best_value and counter<len(self.branches):
 				value = self.branches[counter].evaluate(self.chessboard, True, level-1, BoardEvaluator, white, max_time, best_value)
