@@ -84,14 +84,18 @@ class BoardEvaluation(object):
 		while time.time() < max_time:
 			if self.branches:
 				best_value = self.branches[0].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time)
+				#print best_value
 				evaluations = [best_value]
 				counter = 1
 				while time.time() < max_time and counter < len(self.branches):
 					evaluations.append(self.branches[counter].evaluate(self.chessboard, False, level, self.BoardEvaluator, self.white, max_time, best_value))
-					if evaluations[counter] < best_value:
+					#print evaluations[-1]
+					if evaluations[counter] > best_value:
 						best_value = evaluations[counter]
+						#print 'change best', best_value
 					counter += 1
-				if evaluations == len(self.branches): #If this layer's calculations are done, return the best move.
+				if len(evaluations) == len(self.branches): #If this layer's calculations are done, return the best move.
+					#print 'banana'
 					self.current_move = self.branches[random.choice(find_move_index(evaluations))].move #Fine the actual move for the best branch
 			else:
 				return None #Might want to fix this. I can't imagine it ever returning, for what I'm doing now, but it could probably break something
@@ -178,42 +182,68 @@ class Branch(object):
 		'''
 		if not self.is_setup:
 			self.setup(chessboard) #Creates a new chessboard object, makes a move on it, and finds all of the possible moves
-		if level == -1:
-			return BoardEvaluator(self.chessboard, white)
+			#print 'a',
+		if level == 0:
+			#print 'b',
+			val = self.evaluate_board_state(white, level, BoardEvaluator)
+			#print val
+			return val
+		if not self.branches:
+			#print 'c',
+			val = self.evaluate_board_state(white, level, BoardEvaluator)
+			#print val
+			return val
 
-		if not self.branches: #Deals with a game that is over.
-			#TODO: Diversify results, so that it will always go for the fastest win
-			if self.chessboard.getGameResult() == chessboard.WHITE_WIN: #1 means that white has won
-				if white:
-					return float('Inf')
-				else:
-					return -float('Inf')
-			elif self.chessboard.getGameResult() == chessboard.BLACK_WIN: #2 means that black has won
-				if white:
-					return -float('Inf')
-				else:
-					return float('Inf')
-			else:
-				return BoardEvaluator(self.chessboard, white) #TODO: better draw handling
 		if maxplayer: #Looks for the largest possible value, because it needs to find the biggest payoff
+			#print 'd',
 			counter = 1
 			evaluations = [self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)]
 			while time.time() < max_time and counter < len(self.branches):
+				#print 'e',
 				evaluations.append(self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value))
 				counter += 1
-			return max(evaluations)
+			val = max(evaluations)
+			#print val
+			return val
 		else: #Looks for a value worse than the current worst case scenario. Returns the first value that fits the criteria
+			#print 'f',
 			if not best_value: #TODO: Make this bit less stupid. It doesn't do time evaluation, and won't break anything, but just doesn't seem right
+				#print 'g',
 				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time) for i in xrange(len(self.branches))])
 			else:
+				#print 'h',
 				current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)
+				#print current_value
 				counter = 0
 				while time.time() < max_time and current_value>=best_value and counter<len(self.branches):
+					#print 'i',
 					value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)
 					if value < current_value:
+						#print '\n j',
+						#print value
 						current_value = value
+					#else:
+						#print 'skip',
+						#print value,
 					counter += 1
+				#print 'return %d' %current_value
 				return current_value
+
+	def evaluate_board_state(self, white, level, BoardEvaluator):
+		#TODO: Diversify results, so that it will always go for the fastest win
+		if self.chessboard.getGameResult() == self.chessboard.WHITE_WIN: #1 means that white has won
+			if white:
+				return 200 + 200*level
+			else:
+				return - 200 - 200*level
+		elif self.chessboard.getGameResult() == self.chessboard.BLACK_WIN: #2 means that black has won
+			if white:
+				return - 200 - 200*level
+			else:
+				return 200 + 200*level
+		else:
+			return BoardEvaluator(self.chessboard, white) #TODO: better draw handling
+
 
 if __name__ == '__main__':
     import doctest
