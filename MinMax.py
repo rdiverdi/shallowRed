@@ -151,8 +151,8 @@ class Branch(object):
 		self.is_setup = False
 
 	def setup(self, chessboard):
-		''' Does all of the work that makes the process of making a possible move slow
-			It takes in the chessborad that it is supposed to be modifying.
+		''' Makes a move on a chessboard, then generates all possible responses to that move
+			It takes in the chessboard that it is supposed to be modifying.
 
 			>>> chessboard = ChessBoard.ChessBoard()
 			>>> chessboard.setFEN("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2")
@@ -164,7 +164,8 @@ class Branch(object):
 			True
 			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True, time.time() + 30)
 			0
-			>>> '''
+			>>> 
+		'''
 		self.chessboard = copy.deepcopy(chessboard)
 		self.chessboard.addMove(self.move[0], self.move[1])
 		self.branches = [Branch(move) for move in get_all_valid_moves(self.chessboard)]
@@ -182,55 +183,53 @@ class Branch(object):
 		'''
 		if not self.is_setup:
 			self.setup(chessboard) #Creates a new chessboard object, makes a move on it, and finds all of the possible moves
-			#print 'a',
 		if level == 0:
-			#print 'b',
-			val = self.evaluate_board_state(white, level, BoardEvaluator)
-			#print val
-			return val
+			return self.evaluate_board_state(white, level, BoardEvaluator)
 		if not self.branches:
-			#print 'c',
-			val = self.evaluate_board_state(white, level, BoardEvaluator)
-			#print val
-			return val
+			return self.evaluate_board_state(white, level, BoardEvaluator)
+		if maxplayer: #Looks for the largest possible value, because it needs to find tohe biggest payoff
+			return max_evaluation(self, level, BoardEvaluator, white, max_time)
+		else: #Looks for a value worse than the current best case scenario. Returns the first value that fits the criteria
+			
 
-		if maxplayer: #Looks for the largest possible value, because it needs to find the biggest payoff
-			#print 'd',
-			counter = 1
-			evaluations = [self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)]
-			while time.time() < max_time and counter < len(self.branches):
-				#print 'e',
-				evaluations.append(self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value))
-				counter += 1
-			val = max(evaluations)
-			#print val
-			return val
-		else: #Looks for a value worse than the current worst case scenario. Returns the first value that fits the criteria
-			#print 'f',
-			if not best_value: #TODO: Make this bit less stupid. It doesn't do time evaluation, and won't break anything, but just doesn't seem right
-				#print 'g',
+	def max_evaluation(self, level, BoardEvaluator, white, max_time):
+		"""
+		"""
+		counter = 1
+		evaluations = [self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)]
+		while time.time() < max_time and counter < len(self.branches):
+			evaluations.append(self.branches[counter].evaluate(self.chessboard, 
+								False, #sets next evaluation to be minimizing
+								level-1, #decrements the level tracker, to end recursion
+								BoardEvaluator,
+								white, 
+								max_time, #conotinues time dependency
+								best_value))
+			counter += 1
+		val = max(evaluations)
+		return val
+
+	def min_evaluation(self, level, BoardEvaluator, white, max_time, best_value = None):
+		"""
+		"""
+		if not best_value: #TODO: Make this bit less stupid. It doesn't do time evaluation, and won't break anything, but just doesn't seem right
 				return min([self.branches[i].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time) for i in xrange(len(self.branches))])
-			else:
-				#print 'h',
-				current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)
-				#print current_value
-				counter = 0
-				while time.time() < max_time and current_value>=best_value and counter<len(self.branches):
-					#print 'i',
-					value = self.branches[counter].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)
-					if value < current_value:
-						#print '\n j',
-						#print value
-						current_value = value
-					#else:
-						#print 'skip',
-						#print value,
-					counter += 1
-				#print 'return %d' %current_value
-				return current_value
+		else:
+			current_value = self.branches[0].evaluate(self.chessboard, not maxplayer, level-1, BoardEvaluator, white, max_time, best_value)
+			counter = 0
+			while time.time() < max_time and current_value>=best_value and counter<len(self.branches):
+				value = self.branches[counter].evaluate(self.chessboard, True, level-1, BoardEvaluator, white, max_time, best_value)
+				if value < current_value:
+					current_value = value
+				counter += 1
+			return current_value
 
 	def evaluate_board_state(self, white, level, BoardEvaluator):
-		#TODO: Diversify results, so that it will always go for the fastest win
+		""" Allows evaluation while checking for checkmates.
+			This takes in  which player you are, how deep in the recursion
+			(for the sake of finding faster checkmates), and the 
+			evaluation function. It outputs a board score
+		"""
 		if self.chessboard.getGameResult() == self.chessboard.WHITE_WIN: #1 means that white has won
 			if white:
 				return 200 + 200*level
