@@ -31,6 +31,7 @@
 
     <ul id="nav_ul">
       <li id="nav_li"><a id="nav_a" href="index.html">Home</a></li>
+      <li id="nav_li"><a id="nav_a" href="history.html">AI History</a></li>
       <li id="nav_li"><a id="nav_a" href="deliverables.html">Deliverables</a></li>
       <li id="nav_li"><a id="nav_a" href="play.html">Play our AI</a></li>
       <li id="nav_li"><a id="nav_a" href="ack.html">Acknowledgements</a></li>
@@ -44,29 +45,44 @@
         <h2>
 <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Our Project</h2>
 
-<p>We are making a chess AI, beginning with minmax searching and alpha-beta pruning, then incorporating neural networks and evolutionary algorithms to optimize the performance.</p>
+<p>Our project was to develop a program that could play chess competitively against us.  We made a chess AI using a minmax search algorithm with alpha-beta pruning, then incorporated a dictionary lookup to help the AI make opening moves before the search tree encounters piece captures.</p>
 
         <h3>
-<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other interesting things:</h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Motivations:</h3>
 
 <p>
-  Chess AIs were studies heavily until Deep Blue, an IBM supercomputer, beat the best human chess player in the world.  For many, interest in chess AIs waned after this victory because there seemed to be nothing left to prove.  However, Deep Blue used very simple algorithms combined with an enormous amount of computing power to win its match, meaning that household computers are still not powerful enough to run Deep Blue's algorithm and beat people at chess with ease.  Since Deep Blue's victory, research into new methods of developing computer algorithms have led to new options which could make simpler algorithms in which the computer has to think less while still competing with excellent human chess players. <br><br>
+  We were interested in going beyond classic chess algorithms, but for this project we focused on understanding the theory behind existing chess algorithms and making a working AI with some improvements over simple AI algorithms.
+</p>
 
-  Chess AIs generally start with a min-max search algorithm which looks a certain number of moves ahead, choosing moves along the search tree as if it were the player making that move, and evaluates
-  the board to find the best move. The "best move" is defined as the move which has the least risk associated with it,
-  where risk is the outcome with the most loss.  Loss is often measured by giving a value to each piece, which is then
-  added or subtracted when that piece is captured or lost. There are some other methods of evaluating boards which are
-  discussed below. <br>
-  Alpha-beta pruning is a meathod for speeding up the min-max algorithm by ignoring branches of the seach tree
-  which are obviously worse than already checked branches. A well done min-max algorithm with alpha-beta pruning was all that went into Deep Blue.  Using this basic structrue, it simply looked ahead farther than even the best chess player could think, and won the game before any human coluld see what was coming. <br><br>
-  Evolutionary algorithms could be a way to develop algorithms which compete well without looking so far ahead.  One way to incorporate these algorithms is to use them to optimize min-max search algorithms by adjusting the weights of each piece in order
-  to improve the AI's chances of winning. This was the focus of Michael and Dennis' project last year. <br>
-  Another machine learning approach is to use neural networks. These have taken two different approaches in the past.
-  The first option is using a neural network to evaluate board positions, and tell whether or not it's good for
-  the player. Computers working this way still use the classic min-max strategy, but are simply supposed to do their
-  calculations more quickly. The other option is using a network to directly predict what move is best, rather than
-  just evaluating what board positions are best. These networks are much more interesting, and much faster, but also
-  more complicated to impliment.
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Min-Max search trees:</h3>
+
+<p>
+  The basis of our AI is a min-max search tree which looks as many moves ahead as it can before running out of time.  This search tree tries to find the best move by calculating the opponents reaction move, then calculating its next move, repeating for as many layers as it can.  Because of the number of possible chess moves, the computations required in each successive layer grows at a rediculous rate (the exact rate depends on the number of possible moves associated with each chess board), so given 15 seconds to make a move, our algorithm is only able to look 3 moves ahead.
+  <img src="images/minmax.png" alt="Mountain View" style="width:100%;height:auto">
+  <font size="2.5">Image courtesy of <a href = "http://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning"> wikipedia </a></font><br>
+  The above diagram illustrates how a min-max search tree works.  The numbers represent evaluations of board states, where higher values are better for the AI and lower values are better for the AI's opponent.  The top layer represents the current board state, from which the AI must choose any of the three board states in the 2nd layer by making a move.  Naturally, the AI chooses the move that leads to the highest value board state.  The board state which is passed from the 3rd layer up to the 2nd represents the opponent's move.  The AIs opponent will make a move selecting the lowest value board state from the 3rd layer (worst for the AI), so the second layer is a "min" layer.  The next layer again represents the AI's move, making it a "max" layer, and so on.
+</p>
+
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alpha-Beta pruning</h3>
+<p>
+  Alpha-beta pruning is a method for speeding up min-max calculations by eliminating board evaluations which can be shown to be irrelevent before they are calculated.  Look again at the min-max search tree above.  Assuming the algorithm runs its calculations down the tree from left to right, the greyed out boxes show calulations which alpha beta pruning would cut off.  If you look two layers above each of the double red lines, you can see that no matter the value in the gray box, that value would not be selected.  For example, if the gray 5 in the lower left portion of the diagram were a 2, the 4 in the next layer up would be replaced with the 2, but the 5 above that would still select for the value 5, not 2.  The program keeps track of this in "min" layers by keeping track of the value which would currently be selected by the "max" layer above.  If the "min" layer finds a value lower than the existing max value, then it stops searching down that branch because even if a lower value is found, the max layer above will select away from that branch.
+</p>
+
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dictionary Lookup</h3>
+<p>
+  One problem with min-max algorithms is the opening moves.  In the first few moves of a chess game, pieces are very rarely captured, mening that a classic min-max algorithm would make a mostly random move.  One way to aid this is to use a dictionary of moves people have made in real chess matches. Rather than making a random move, this method would look for a game which had the current board state and make a move which someone has made in that situation.  We tracked eventual wins and losses after each move, so if a board state occurs more than once in the dictionary we can select the move with the best win percentage.  Under the assumption that moves which result in winning the game are good moves, we decided to continue using this dictionary lookup approach until we get to a board state which doesn't appear in the dictionary.
+</p>
+
+<h2>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Our Code</h2>
+<p>
+  We implemented all of the elements we described above, starting with the min-max search, then incorporating alpha-beta pruning, and finally adding the dictionary lookup.  Below is a diagram of our final code structure.
+  <img src="images/codediagram.png" alt="Mountain View" style="width:70%;height:auto"><br>
+  <font size="2.5">Image courtesy of <a href = "SEAN.html"> Sean Carter </a></font><br>
+  We found an existing chess game implementation (ChessBoard) and made an intermediate program to accept both user inputs and AI inputs.  This intermediate program can output an ascii representation of the chess board so a user can see the board and input a move.  The program can also output a standard string representation of the chessboard (FEN) to the AI, which then inputs a move in the same way as a user.  the AI has a base board evaluation class which decides whether to use dictionary lookup or min-max searching.  During min-max searching, the it also keeps track of how many layers are evaluated and how much time is left. The evaluation class makes instances of the branch class for each possible move. These branches then recursively make more branches down the search tree.  Branches execute the min-max search algorithm by selecting the appropriate sub-branch from the layer below or evaluating the board state if they are at the bottom layer.
 </p>
 
 </section>

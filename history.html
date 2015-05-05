@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Shallowred : such chess">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>ShallowRed</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/rdiverdi/shallowRed">View on GitHub</a>
+
+          <h1 id="project_title"><a id="project_title" href="index.html">Shallowred</a></h1>
+          <h2 id="project_tagline">such chess</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/rdiverdi/shallowRed/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/rdiverdi/shallowRed/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+    <!--navigation bar -->
+
+    <ul id="nav_ul">
+      <li id="nav_li"><a id="nav_a" href="index.html">Home</a></li>
+      <li id="nav_li"><a id="nav_a" href="history.html">AI History</a></li>
+      <li id="nav_li"><a id="nav_a" href="deliverables.html">Deliverables</a></li>
+      <li id="nav_li"><a id="nav_a" href="play.html">Play our AI</a></li>
+      <li id="nav_li"><a id="nav_a" href="ack.html">Acknowledgements</a></li>
+    </ul>
+
+
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Some History of Chess AIs</h2>
+
+
+
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>AIs vs. Humans:</h3>
+
+<p>
+  Chess AIs were studied heavily until Deep Blue, an IBM supercomputer, beat the best human chess player in the world.  For many, interest in chess AIs waned after this victory because there seemed to be nothing left to prove.  However, Deep Blue used very simple algorithms combined with an enormous amount of computing power to win its match, meaning that household computers are still not powerful enough to run Deep Blue's algorithm and beat people at chess with ease.  Since Deep Blue's victory, research into new methods of developing computer algorithms have led to new options which could make simpler algorithms in which the computer has to think less while still competing with excellent human chess players.
+</p>
+
+          <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code Structure:</h3>
+
+<p>
+  Chess AIs generally start with a min-max search algorithm which looks a certain number of moves ahead, choosing moves along the search tree as if it were the player making that move, and evaluates
+  the board to find the best move. The "best move" is defined as the move which has the least risk associated with it,
+  where risk is the outcome with the most loss.  Loss is often measured by giving a value to each piece, which is then
+  added or subtracted when that piece is captured or lost. There are some other methods of evaluating boards which are
+  discussed below. <br>
+  Alpha-beta pruning is a meathod for speeding up the min-max algorithm by ignoring branches of the seach tree
+  which are obviously worse than already checked branches. A well done min-max algorithm with alpha-beta pruning was all that went into Deep Blue.  Using this basic structrue, it simply looked ahead farther than even the best chess player could think, and won the game before any human coluld see what was coming. <br><br>
+  Evolutionary algorithms could be a way to develop algorithms which compete well without looking so far ahead.  One way to incorporate these algorithms is to use them to optimize min-max search algorithms by adjusting the weights of each piece in order
+  to improve the AI's chances of winning. This was the focus of Michael and Dennis' project last year. <br>
+  Another machine learning approach is to use neural networks. These have taken two different approaches in the past.
+  The first option is using a neural network to evaluate board positions, and tell whether or not it's good for
+  the player. Computers working this way still use the classic min-max strategy, but are simply supposed to do their
+  calculations more quickly. The other option is using a network to directly predict what move is best, rather than
+  just evaluating what board positions are best. These networks are much more interesting, and much faster, but also
+  more complicated to impliment.
+</p>
+
+</section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Shallowred maintained by <a href="https://github.com/rdiverdi">rdiverdi</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+  </body>
+</html>
