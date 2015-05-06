@@ -127,7 +127,7 @@ class BoardEvaluation(object):
 					if new_val > value: #if this move is better than existing best
 						value = new_val
 						best_move = moves
-					elif new_val==value) and board_dict[board][moves][0]>board_dict[board][best_move][0]:
+					elif new_val==value and board_dict[board][moves][0]>board_dict[board][best_move][0]:
 						#if this value = current max value AND more overall wins
 						value = new_val
 						best_move = moves
