@@ -106,40 +106,31 @@ class BoardEvaluation(object):
 	def eval_by_dict(self, board_dict):
 		""" Takes in a dictionary of boards,
 			searches for the best move to make at a specific board position,
-			and outputs that movee in the form of the resultant board.
+			and outputs that move in the form of the resultant board.
 			Uses a ratio of possible wins and possible losses of each move,
 			ignoring draws and giving priority to high ratios with greater overall wins.
 		"""
-		value = -1.
+		value = None
 		best_move = ()
-		best_wins = -1
-		best_losses = -1
 		board = self.chessboard.getFEN().split()[0]
 		if board in board_dict:
 			for moves in board_dict[board]:
-				if board_dict[board][moves][1] == 0:
-					if board_dict[board][moves][0] != 0:
+				if board_dict[board][moves][1] == 0: #if move hasn't lost
+					if board_dict[board][moves][0] != 0: #if move has won but never lost
 						value = board_dict[board][moves][0]*1000000000
 						best_move = moves
-						best_wins = board_dict[board][moves][0]
-						best_losses = board_dict[board][moves][1]
-					elif value == -1:
-						value = 0
+					elif value == None: #if move has only drawn and best_move hasn't been set
+						value = 0.
 						best_move = moves
-						best_wins = board_dict[board][moves][0]
-						best_losses = board_dict[board][moves][1]
-				elif float(board_dict[board][moves][0]/board_dict[board][moves][1]) > value:
-					#or if just better move
-					value = float(board_dict[board][moves][0]/board_dict[board][moves][1])
-					best_move = moves
-					best_wins = board_dict[board][moves][0]
-					best_losses = board_dict[board][moves][1]
-				elif (float(board_dict[board][moves][0]/board_dict[board][moves][1])==value) and board_dict[board][moves][0]>best_move:
-					#if W=L AND it is better move AND more overall wins
-					value = float(board_dict[board][moves][0]/board_dict[board][moves][1])
-					best_move = moves
-					best_wins = board_dict[board][moves][0]
-					best_losses = board_dict[board][moves][1]
+				else:
+					new_val = float(board_dict[board][moves][0]/board_dict[board][moves][1])
+					if new_val > value: #if this move is better than existing best
+						value = new_val
+						best_move = moves
+					elif new_val==value and board_dict[board][moves][0]>board_dict[board][best_move][0]:
+						#if this value = current max value AND more overall wins
+						value = new_val
+						best_move = moves
 		return best_move
 
 
@@ -164,7 +155,7 @@ class Branch(object):
 			True
 			>>> a_branch.evaluate(chessboard, True, 0, evaluate_board, True, time.time() + 30)
 			0
-			>>> 
+			>>>
 		'''
 		self.chessboard = copy.deepcopy(chessboard)
 		self.chessboard.addMove(self.move[0], self.move[1])
@@ -198,11 +189,11 @@ class Branch(object):
 		counter = 1
 		evaluations = [self.branches[0].evaluate(self.chessboard, False, level-1, BoardEvaluator, white, max_time, best_value)]
 		while time.time() < max_time and counter < len(self.branches):
-			evaluations.append(self.branches[counter].evaluate(self.chessboard, 
+			evaluations.append(self.branches[counter].evaluate(self.chessboard,
 								False, #sets next evaluation to be minimizing
 								level-1, #decrements the level tracker, to end recursion
 								BoardEvaluator,
-								white, 
+								white,
 								max_time, #conotinues time dependency
 								best_value))
 			counter += 1
@@ -227,7 +218,7 @@ class Branch(object):
 	def evaluate_board_state(self, white, level, BoardEvaluator):
 		""" Allows evaluation while checking for checkmates.
 			This takes in  which player you are, how deep in the recursion
-			(for the sake of finding faster checkmates), and the 
+			(for the sake of finding faster checkmates), and the
 			evaluation function. It outputs a board score
 		"""
 		if self.chessboard.getGameResult() == self.chessboard.WHITE_WIN: #1 means that white has won
