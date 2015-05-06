@@ -60,7 +60,7 @@
 <p>
   The basis of our AI is a min-max search tree which looks as many moves ahead as it can before running out of time.  This search tree tries to find the best move by calculating the opponents reaction move, then calculating its next move, repeating for as many layers as it can.  Because of the number of possible chess moves, the computations required in each successive layer grows at a rediculous rate (the exact rate depends on the number of possible moves associated with each chess board), so given 15 seconds to make a move, our algorithm is only able to look 3 moves ahead.
   <img src="images/minmax.png" alt="Mountain View" style="width:100%;height:auto">
-  <font size="2.5">Image courtesy of <a href = "http://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning"> wikipedia </a></font><br>
+  <font size="2.5">Image courtesy of <a id="link" href = "http://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning"> wikipedia </a></font><br>
   The above diagram illustrates how a min-max search tree works.  The numbers represent evaluations of board states, where higher values are better for the AI and lower values are better for the AI's opponent.  The top layer represents the current board state, from which the AI must choose any of the three board states in the 2nd layer by making a move.  Naturally, the AI chooses the move that leads to the highest value board state.  The board state which is passed from the 3rd layer up to the 2nd represents the opponent's move.  The AIs opponent will make a move selecting the lowest value board state from the 3rd layer (worst for the AI), so the second layer is a "min" layer.  The next layer again represents the AI's move, making it a "max" layer, and so on.
 </p>
 
@@ -81,7 +81,7 @@
 <p>
   We implemented all of the elements we described above, starting with the min-max search, then incorporating alpha-beta pruning, and finally adding the dictionary lookup.  Below is a diagram of our final code structure.
   <img src="images/codediagram.png" alt="Mountain View" style="width:70%;height:auto"><br>
-  <font size="2.5">Image courtesy of <a href = "SEAN.html"> Sean Carter </a></font><br>
+  <font size="2.5">Image courtesy of <a id="link" href = "SEAN.html"> Sean Carter </a></font><br>
   We found an existing chess game implementation (ChessBoard) and made an intermediate program to accept both user inputs and AI inputs.  This intermediate program can output an ascii representation of the chess board so a user can see the board and input a move.  The program can also output a standard string representation of the chessboard (FEN) to the AI, which then inputs a move in the same way as a user.  the AI has a base board evaluation class which decides whether to use dictionary lookup or min-max searching.  During min-max searching, the it also keeps track of how many layers are evaluated and how much time is left. The evaluation class makes instances of the branch class for each possible move. These branches then recursively make more branches down the search tree.  Branches execute the min-max search algorithm by selecting the appropriate sub-branch from the layer below or evaluating the board state if they are at the bottom layer.
 </p>
 
