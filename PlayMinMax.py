@@ -7,10 +7,14 @@ import pickle
 def makeBoard():
 	return ChessBoard.ChessBoard()
 
-def AI_Move(chessboard, white, max_time, dictionary):
+def AI_Move(chessboard, white, max_time, dictionary = None):
 	evaluation = MinMax.BoardEvaluation(chessboard, white, MinMax.evaluate_board)
 	curr_time = time.time()
-	dictionary_move = evaluation.eval_by_dict(dictionary)
+	if dictionary:
+		dictionary_move = evaluation.eval_by_dict(dictionary)
+	else:
+		dictionary_move = None
+
 	if dictionary_move:
 		print "Move found in dictionary."
 		chessboard.addMove(dictionary_move[0], dictionary_move[1])
@@ -33,7 +37,14 @@ def requestPlayerMove(chessboard):
 		valid_move = playerMove(chessboard, move)
 
 def main():
+	print "Creating Board"
 	board = ChessBoard.ChessBoard()
+	board_dictionary = None
+	#print "Opening Board Dictionary"
+	#f = open("Opening_book.txt")
+	#board_dictionary = pickle.load(f)
+	#f.close()
+
 	AI_color = raw_input("Which color should the AI take? [w/b]\n")
 	AI_time = 17
 	while AI_color not in 'wb':
@@ -44,14 +55,14 @@ def main():
 	while not board.isGameOver():
 		if white_turn:
 			if AI_color == 'w':
-				AI_Move(board, True, AI_time, dictionary)
+				AI_Move(board, True, AI_time, board_dictionary)
 			else:
 				requestPlayerMove(board)
 		else:
 			if AI_color == 'w':
 				requestPlayerMove(board)
 			else:
-				AI_Move(board, False, AI_time, dictionary)
+				AI_Move(board, False, AI_time, board_dictionary)
 		white_turn = not white_turn
 
 	print board.getGameResult()

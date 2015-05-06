@@ -112,25 +112,25 @@ class BoardEvaluation(object):
 		"""
 		value = None
 		best_move = ()
-		board = self.chessboard.getFEN().split()[0]
+		board = (self.chessboard.getFEN().split()[0], self.white)
 		if board in board_dict:
-			for moves in board_dict[board]:
-				if board_dict[board][moves][1] == 0: #if move hasn't lost
-					if board_dict[board][moves][0] != 0: #if move has won but never lost
-						value = board_dict[board][moves][0]*1000000000
-						best_move = moves
+			for move in board_dict[board]:
+				if board_dict[board][move][1] == 0: #if move hasn't lost
+					if board_dict[board][move][0] != 0: #if move has won but never lost
+						value = board_dict[board][move][0]*1000000000
+						best_move = move
 					elif value == None: #if move has only drawn and best_move hasn't been set
 						value = 0.
-						best_move = moves
+						best_move = move
 				else:
-					new_val = float(board_dict[board][moves][0]/board_dict[board][moves][1])
+					new_val = float(board_dict[board][move][0]/board_dict[board][move][1])
 					if new_val > value: #if this move is better than existing best
 						value = new_val
-						best_move = moves
-					elif new_val==value and board_dict[board][moves][0]>board_dict[board][best_move][0]:
+						best_move = move
+					elif new_val==value and board_dict[board][move][0]>board_dict[board][best_move][0]:
 						#if this value = current max value AND more overall wins
 						value = new_val
-						best_move = moves
+						best_move = move
 		return best_move
 
 
